@@ -19,9 +19,14 @@ Successfully installed pkg1-0.0.1
 pkg1==0.0.1
 + ls -1 venv1/lib/python3.6/site-packages/pkg1-0.0.1-py3.6-nspkg.pth
 venv1/lib/python3.6/site-packages/pkg1-0.0.1-py3.6-nspkg.pth
++ ls -1 venv1/lib/python3.6/site-packages/pkg1/
+foo.py
+__pycache__
 + venv1/bin/pip install pkg2-dir/
 ...
 Successfully installed pkg2-0.0.1
++ ls -1 venv1/lib/python3.6/site-packages/pkg2/
+ls: cannot access 'venv1/lib/python3.6/site-packages/pkg2/': No such file or directory
 + venv1/bin/pip freeze
 Failed to import the site module
 Traceback (most recent call last):
@@ -41,10 +46,18 @@ AttributeError: 'NoneType' object has no attribute 'loader'
 + rm -fr venv1/
 ```
 
-This [failure][1] occurs because of
+This [failure][1] occurs at the `importlib` line:
 
 ```python
 hasattr(spec.loader, 'create_module'):
+```
+
+It's caused by the fact that `pkg2` registers a namespace package but doesn't
+include any files (from above):
+
+```
++ ls -1 venv1/lib/python3.6/site-packages/pkg2/
+ls: cannot access 'venv1/lib/python3.6/site-packages/pkg2/': No such file or directory
 ```
 
 [1]: https://github.com/python/cpython/blob/v3.6.2/Lib/importlib/_bootstrap.py#L557
