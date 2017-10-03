@@ -21,16 +21,15 @@ Version: 9.0.1
 Successfully installed pkg1-0.0.1
 + venv1/bin/pip freeze
 pkg1==0.0.1
-+ ls -1 venv1/lib/python3.6/site-packages/pkg1-0.0.1-py3.6-nspkg.pth
-venv1/lib/python3.6/site-packages/pkg1-0.0.1-py3.6-nspkg.pth
++ ls -1 venv1/lib/python3.6/site-packages/
++ grep -e 'pth$'
+pkg1-0.0.1-py3.6-nspkg.pth
 + ls -1 venv1/lib/python3.6/site-packages/pkg1/
 foo.py
 __pycache__
 + venv1/bin/pip install pkg2-dir/
 ...
 Successfully installed pkg2-0.0.1
-+ ls -1 venv1/lib/python3.6/site-packages/pkg2/
-ls: cannot access 'venv1/lib/python3.6/site-packages/pkg2/': No such file or directory
 + venv1/bin/pip freeze
 Failed to import the site module
 Traceback (most recent call last):
@@ -47,6 +46,12 @@ Traceback (most recent call last):
   File "<string>", line 1, in <module>
   File "<frozen importlib._bootstrap>", line 557, in module_from_spec
 AttributeError: 'NoneType' object has no attribute 'loader'
++ ls -1 venv1/lib/python3.6/site-packages/
++ grep -e 'pth$'
+pkg1-0.0.1-py3.6-nspkg.pth
+pkg2-0.0.1-py3.6-nspkg.pth
++ ls -1 venv1/lib/python3.6/site-packages/pkg2/
+ls: cannot access 'venv1/lib/python3.6/site-packages/pkg2/': No such file or directory
 + rm -fr venv1
 ```
 
@@ -87,20 +92,25 @@ Version: 9.0.1
 Successfully installed pkg1-0.0.1
 + venv2/bin/pip freeze
 pkg1==0.0.1
-+ ls -1 venv2/lib/python3.6/site-packages/pkg1-0.0.1-py3.6-nspkg.pth
-venv2/lib/python3.6/site-packages/pkg1-0.0.1-py3.6-nspkg.pth
++ ls -1 venv2/lib/python3.6/site-packages/
++ grep -e 'pth$'
+pkg1-0.0.1-py3.6-nspkg.pth
 + ls -1 venv2/lib/python3.6/site-packages/pkg1/
 foo.py
 __pycache__
 + venv2/bin/pip install pkg3-dir/
 ...
 Successfully installed pkg3-0.0.1
-+ ls -1 venv2/lib/python3.6/site-packages/pkg3/
-bar.py
-__pycache__
 + venv2/bin/pip freeze
 pkg1==0.0.1
 pkg3==0.0.1
++ ls -1 venv2/lib/python3.6/site-packages/
++ grep -e 'pth$'
+pkg1-0.0.1-py3.6-nspkg.pth
+pkg3-0.0.1-py3.6-nspkg.pth
++ ls -1 venv2/lib/python3.6/site-packages/pkg3/
+bar.py
+__pycache__
 + rm -fr venv2
 ```
 
@@ -130,8 +140,9 @@ Version: 9.0.1
 Successfully installed pkg1-0.0.1
 + venv3/bin/pip freeze
 pkg1==0.0.1
-+ ls -1 venv3/lib/python3.6/site-packages/pkg1-0.0.1-py3.6-nspkg.pth
-venv3/lib/python3.6/site-packages/pkg1-0.0.1-py3.6-nspkg.pth
++ ls -1 venv3/lib/python3.6/site-packages/
++ grep -e 'pth$'
+pkg1-0.0.1-py3.6-nspkg.pth
 + ls -1 venv3/lib/python3.6/site-packages/pkg1/
 foo.py
 __pycache__
@@ -144,17 +155,75 @@ Adding pkg3 0.0.1 to easy-install.pth file
 Installed .../venv3/lib/python3.6/site-packages/pkg3-0.0.1-py3.6.egg
 Processing dependencies for pkg3==0.0.1
 Finished processing dependencies for pkg3==0.0.1
++ venv3/bin/pip freeze
+pkg1==0.0.1
+pkg3==0.0.1
++ ls -1 venv3/lib/python3.6/site-packages/
++ grep -e 'pth$'
+easy-install.pth
+pkg1-0.0.1-py3.6-nspkg.pth
 + ls -1 venv3/lib/python3.6/site-packages/pkg3-0.0.1-py3.6.egg/pkg3/
 bar.py
 __init__.py
 __pycache__
-+ venv3/bin/pip freeze
-pkg1==0.0.1
-pkg3==0.0.1
 + rm -fr venv3
 + rm -fr pkg3-dir/build/
 + rm -fr pkg3-dir/dist/
 + rm -fr pkg3-dir/src/pkg3.egg-info/
+```
+
+## Example 4
+
+This example installs `pkg1` and `pkg4`, and like [Example 2][3]
+it uses `pip` for both (and does not cause any issues). It is
+unique because `pkg4` has both `pkg1` and `pkg1.one_more` as
+namespace packages (i.e. it "collides" with `pkg1`).
+
+```
+$ ./example04.sh
++ VENV=venv4
++ PYTHON=python3.6
++ FIRST_PKG=pkg1
++ SECOND_PKG=pkg4
++ virtualenv --python=python3.6 venv4
+...
++ venv4/bin/pip show pip
+Name: pip
+Version: 9.0.1
+...
++ venv4/bin/pip install pkg1-dir/
+...
+Successfully installed pkg1-0.0.1
++ venv4/bin/pip freeze
+pkg1==0.0.1
++ ls -1 venv4/lib/python3.6/site-packages/
++ grep -e 'pth$'
+pkg1-0.0.1-py3.6-nspkg.pth
++ ls -1 venv4/lib/python3.6/site-packages/pkg1/
+foo.py
+__pycache__
++ venv4/bin/pip install pkg4-dir/
+...
+Successfully installed pkg4-0.0.1
++ venv4/bin/pip freeze
+pkg1==0.0.1
+pkg4==0.0.1
++ ls -1 venv4/lib/python3.6/site-packages/
++ grep -e 'pth$'
+pkg1-0.0.1-py3.6-nspkg.pth
+pkg4-0.0.1-py3.6-nspkg.pth
++ tree -a venv4/lib/python3.6/site-packages/pkg1/
+venv4/lib/python3.6/site-packages/pkg1/
+├── foo.py
+├── one_more
+│   ├── __pycache__
+│   │   └── quux.cpython-36.pyc
+│   └── quux.py
+└── __pycache__
+    └── foo.cpython-36.pyc
+
+3 directories, 4 files
++ rm -fr venv4
 ```
 
 [1]: https://github.com/python/cpython/blob/v3.6.2/Lib/importlib/_bootstrap.py#L557
