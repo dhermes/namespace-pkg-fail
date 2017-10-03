@@ -227,6 +227,127 @@ venv4/lib/python3.6/site-packages/pkg1_ns/
 + rm -fr venv4
 ```
 
+## Example 5
+
+This example installs `pkg1` and `pkg4` just like [Example 4][4],
+but it uses `setuptools` to install `pkg4` (like [Example 3][5]).
+The namespace collision between `pkg1` and `pkg4`
+causes an error that has been reported many times over:
+
+```
+$ ./example05.sh
++ VENV=venv5
++ PYTHON=python3.6
++ FIRST_PKG=pkg1
++ SECOND_PKG=pkg4
++ virtualenv --python=python3.6 venv5
+...
++ venv5/bin/pip show pip
+Name: pip
+Version: 9.0.1
+...
++ venv5/bin/pip install pkg1-dir/
+...
+Successfully installed pkg1-0.0.1
++ venv5/bin/pip freeze
+pkg1==0.0.1
++ ls -1 venv5/lib/python3.6/site-packages/
++ grep -e 'pth$'
+pkg1-0.0.1-py3.6-nspkg.pth
++ ls -1 venv5/lib/python3.6/site-packages/pkg1_ns/
+foo.py
+__pycache__
++ cd pkg4-dir/
++ ../venv5/bin/python setup.py install
+...
+Extracting pkg4-0.0.1-py3.6.egg to .../venv5/lib/python3.6/site-packages
+Adding pkg4 0.0.1 to easy-install.pth file
+
+Installed .../venv5/lib/python3.6/site-packages/pkg4-0.0.1-py3.6.egg
+Processing dependencies for pkg4==0.0.1
+Finished processing dependencies for pkg4==0.0.1
++ venv5/bin/pip freeze
+Traceback (most recent call last):
+  File "venv5/bin/pip", line 7, in <module>
+    from pip import main
+  File ".../venv5/lib/python3.6/site-packages/pip/__init__.py", line 26, in <module>
+    from pip.utils import get_installed_distributions, get_prog
+  File ".../venv5/lib/python3.6/site-packages/pip/utils/__init__.py", line 27, in <module>
+    from pip._vendor import pkg_resources
+  File ".../venv5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 3018, in <module>
+    @_call_aside
+  File ".../venv5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 3004, in _call_aside
+    f(*args, **kwargs)
+  File ".../venv5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 3046, in _initialize_master_working_set
+    dist.activate(replace=False)
+  File ".../venv5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2578, in activate
+    declare_namespace(pkg)
+  File ".../venv5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2152, in declare_namespace
+    _handle_ns(packageName, path_item)
+  File ".../venv5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2092, in _handle_ns
+    _rebuild_mod_path(path, packageName, module)
+  File ".../venv5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2121, in _rebuild_mod_path
+    orig_path.sort(key=position_in_sys_path)
+AttributeError: '_NamespacePath' object has no attribute 'sort'
++ ls -1 venv5/lib/python3.6/site-packages/
++ grep -e 'pth$'
+easy-install.pth
+pkg1-0.0.1-py3.6-nspkg.pth
++ ls -1 venv5/lib/python3.6/site-packages/pkg1_ns/
+foo.py
+__pycache__
++ tree -a venv5/lib/python3.6/site-packages/pkg1_ns/
+venv5/lib/python3.6/site-packages/pkg1_ns/
+├── foo.py
+└── __pycache__
+    └── foo.cpython-36.pyc
+
+1 directory, 2 files
++ tree -a venv5/lib/python3.6/site-packages/pkg4-0.0.1-py3.6.egg/pkg1_ns/
+venv5/lib/python3.6/site-packages/pkg4-0.0.1-py3.6.egg/pkg1_ns/
+├── __init__.py
+├── pkg4_ns
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-36.pyc
+│   │   └── quux.cpython-36.pyc
+│   └── quux.py
+└── __pycache__
+    └── __init__.cpython-36.pyc
+
+3 directories, 6 files
++ rm -fr venv5
++ rm -fr pkg4-dir/build/
++ rm -fr pkg4-dir/dist/
++ rm -fr pkg4-dir/src/pkg4.egg-info/
+```
+
+The issue is that the `pip` added a namespace package doesn't
+live in the same place as the one added by `setuptools`:
+
+```
++ tree -a venv5/lib/python3.6/site-packages/pkg1_ns/
+venv5/lib/python3.6/site-packages/pkg1_ns/
+├── foo.py
+└── __pycache__
+    └── foo.cpython-36.pyc
+
+1 directory, 2 files
++ tree -a venv5/lib/python3.6/site-packages/pkg4-0.0.1-py3.6.egg/pkg1_ns/
+venv5/lib/python3.6/site-packages/pkg4-0.0.1-py3.6.egg/pkg1_ns/
+├── __init__.py
+├── pkg4_ns
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-36.pyc
+│   │   └── quux.cpython-36.pyc
+│   └── quux.py
+└── __pycache__
+    └── __init__.cpython-36.pyc
+```
+
 [1]: https://github.com/python/cpython/blob/v3.6.2/Lib/importlib/_bootstrap.py#L557
 [2]: #example-1
 [3]: #example-2
+[4]: #example-4
+[5]: #example-3
