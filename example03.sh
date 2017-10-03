@@ -13,13 +13,13 @@ ${VENV}/bin/pip show pip
 ${VENV}/bin/pip install ${FIRST_PKG}-dir/
 ${VENV}/bin/pip freeze
 ls -1 ${VENV}/lib/${PYTHON}/site-packages/ | grep -e 'pth$'
-ls -1 ${VENV}/lib/${PYTHON}/site-packages/${FIRST_PKG}/
+ls -1 ${VENV}/lib/${PYTHON}/site-packages/${FIRST_PKG}_ns/
 # Second package (via setuptools).
 (cd ${SECOND_PKG}-dir/ && \
     ../${VENV}/bin/python setup.py install)
 ${VENV}/bin/pip freeze
 ls -1 ${VENV}/lib/${PYTHON}/site-packages/ | grep -e 'pth$'
-ls -1 ${VENV}/lib/${PYTHON}/site-packages/${SECOND_PKG}*.egg/${SECOND_PKG}/
+ls -1 ${VENV}/lib/${PYTHON}/site-packages/${SECOND_PKG}*.egg/${SECOND_PKG}_ns/
 # Cleanup
 rm -fr ${VENV}
 rm -fr ${SECOND_PKG}-dir/build/

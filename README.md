@@ -24,7 +24,7 @@ pkg1==0.0.1
 + ls -1 venv1/lib/python3.6/site-packages/
 + grep -e 'pth$'
 pkg1-0.0.1-py3.6-nspkg.pth
-+ ls -1 venv1/lib/python3.6/site-packages/pkg1/
++ ls -1 venv1/lib/python3.6/site-packages/pkg1_ns/
 foo.py
 __pycache__
 + venv1/bin/pip install pkg2-dir/
@@ -50,8 +50,8 @@ AttributeError: 'NoneType' object has no attribute 'loader'
 + grep -e 'pth$'
 pkg1-0.0.1-py3.6-nspkg.pth
 pkg2-0.0.1-py3.6-nspkg.pth
-+ ls -1 venv1/lib/python3.6/site-packages/pkg2/
-ls: cannot access 'venv1/lib/python3.6/site-packages/pkg2/': No such file or directory
++ ls -1 venv1/lib/python3.6/site-packages/pkg2_ns/
+ls: cannot access 'venv1/lib/python3.6/site-packages/pkg2_ns/': No such file or directory
 + rm -fr venv1
 ```
 
@@ -61,12 +61,12 @@ This [failure][1] occurs at the `importlib` line:
 hasattr(spec.loader, 'create_module'):
 ```
 
-It's caused by the fact that `pkg2` registers a namespace package but doesn't
-include any files (from above):
+It's caused by the fact that `pkg2` registers a namespace package (`pkg2_ns`)
+but doesn't include any files (from above):
 
 ```
-+ ls -1 venv1/lib/python3.6/site-packages/pkg2/
-ls: cannot access 'venv1/lib/python3.6/site-packages/pkg2/': No such file or directory
++ ls -1 venv1/lib/python3.6/site-packages/pkg2_ns/
+ls: cannot access 'venv1/lib/python3.6/site-packages/pkg2_ns/': No such file or directory
 ```
 
 ## Example 2
@@ -89,13 +89,14 @@ Version: 9.0.1
 ...
 + venv2/bin/pip install pkg1-dir/
 ...
+Installing collected packages: pkg1
 Successfully installed pkg1-0.0.1
 + venv2/bin/pip freeze
 pkg1==0.0.1
 + ls -1 venv2/lib/python3.6/site-packages/
 + grep -e 'pth$'
 pkg1-0.0.1-py3.6-nspkg.pth
-+ ls -1 venv2/lib/python3.6/site-packages/pkg1/
++ ls -1 venv2/lib/python3.6/site-packages/pkg1_ns/
 foo.py
 __pycache__
 + venv2/bin/pip install pkg3-dir/
@@ -104,11 +105,11 @@ Successfully installed pkg3-0.0.1
 + venv2/bin/pip freeze
 pkg1==0.0.1
 pkg3==0.0.1
-+ ls -1 venv2/lib/python3.6/site-packages/
 + grep -e 'pth$'
++ ls -1 venv2/lib/python3.6/site-packages/
 pkg1-0.0.1-py3.6-nspkg.pth
 pkg3-0.0.1-py3.6-nspkg.pth
-+ ls -1 venv2/lib/python3.6/site-packages/pkg3/
++ ls -1 venv2/lib/python3.6/site-packages/pkg3_ns/
 bar.py
 __pycache__
 + rm -fr venv2
@@ -143,7 +144,7 @@ pkg1==0.0.1
 + ls -1 venv3/lib/python3.6/site-packages/
 + grep -e 'pth$'
 pkg1-0.0.1-py3.6-nspkg.pth
-+ ls -1 venv3/lib/python3.6/site-packages/pkg1/
++ ls -1 venv3/lib/python3.6/site-packages/pkg1_ns/
 foo.py
 __pycache__
 + cd pkg3-dir/
@@ -162,7 +163,7 @@ pkg3==0.0.1
 + grep -e 'pth$'
 easy-install.pth
 pkg1-0.0.1-py3.6-nspkg.pth
-+ ls -1 venv3/lib/python3.6/site-packages/pkg3-0.0.1-py3.6.egg/pkg3/
++ ls -1 venv3/lib/python3.6/site-packages/pkg3-0.0.1-py3.6.egg/pkg3_ns/
 bar.py
 __init__.py
 __pycache__
@@ -176,7 +177,7 @@ __pycache__
 
 This example installs `pkg1` and `pkg4`, and like [Example 2][3]
 it uses `pip` for both (and does not cause any issues). It is
-unique because `pkg4` has both `pkg1` and `pkg1.one_more` as
+unique because `pkg4` has both `pkg1` and `pkg1.pkg4_ns` as
 namespace packages (i.e. it "collides" with `pkg1`).
 
 ```
@@ -199,7 +200,7 @@ pkg1==0.0.1
 + ls -1 venv4/lib/python3.6/site-packages/
 + grep -e 'pth$'
 pkg1-0.0.1-py3.6-nspkg.pth
-+ ls -1 venv4/lib/python3.6/site-packages/pkg1/
++ ls -1 venv4/lib/python3.6/site-packages/pkg1_ns/
 foo.py
 __pycache__
 + venv4/bin/pip install pkg4-dir/
@@ -212,10 +213,10 @@ pkg4==0.0.1
 + grep -e 'pth$'
 pkg1-0.0.1-py3.6-nspkg.pth
 pkg4-0.0.1-py3.6-nspkg.pth
-+ tree -a venv4/lib/python3.6/site-packages/pkg1/
-venv4/lib/python3.6/site-packages/pkg1/
++ tree -a venv4/lib/python3.6/site-packages/pkg1_ns/
+venv4/lib/python3.6/site-packages/pkg1_ns/
 ├── foo.py
-├── one_more
+├── pkg4_ns
 │   ├── __pycache__
 │   │   └── quux.cpython-36.pyc
 │   └── quux.py

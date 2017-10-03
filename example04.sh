@@ -13,11 +13,11 @@ ${VENV}/bin/pip show pip
 ${VENV}/bin/pip install ${FIRST_PKG}-dir/
 ${VENV}/bin/pip freeze
 ls -1 ${VENV}/lib/${PYTHON}/site-packages/ | grep -e 'pth$'
-ls -1 ${VENV}/lib/${PYTHON}/site-packages/${FIRST_PKG}/
+ls -1 ${VENV}/lib/${PYTHON}/site-packages/${FIRST_PKG}_ns/
 # Second package (via pip).
 ${VENV}/bin/pip install ${SECOND_PKG}-dir/
 ${VENV}/bin/pip freeze
 ls -1 ${VENV}/lib/${PYTHON}/site-packages/ | grep -e 'pth$'
-tree -a ${VENV}/lib/${PYTHON}/site-packages/${FIRST_PKG}/
+tree -a ${VENV}/lib/${PYTHON}/site-packages/${FIRST_PKG}_ns/
 # Cleanup
 rm -fr ${VENV}

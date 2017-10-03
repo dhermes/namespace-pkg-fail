@@ -11,8 +11,8 @@ def main():
         description='Some text',
         long_description='README',
         install_requires=[],
-        namespace_packages=[NAME],
-        packages=[NAME],
+        namespace_packages=[NAME + '_ns'],
+        packages=setuptools.find_packages('src'),
         package_dir={'': 'src'},
     )
 
