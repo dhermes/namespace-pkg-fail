@@ -55,7 +55,7 @@ ls: cannot access 'venv1/lib/python3.6/site-packages/pkg2_ns/': No such file or 
 + rm -fr venv1
 ```
 
-This [failure][1] occurs at the `importlib` line:
+This [failure][importlib] occurs at the `importlib` line:
 
 ```python
 hasattr(spec.loader, 'create_module'):
@@ -71,7 +71,7 @@ ls: cannot access 'venv1/lib/python3.6/site-packages/pkg2_ns/': No such file or 
 
 ## Example 2
 
-This example is "identical" to the one [above][2], but it uses `pkg3` instead
+This example is "identical" to the one [above][1], but it uses `pkg3` instead
 of `pkg2`, which actually does include files. When using `pip` alone to
 install it, there are no issues:
 
@@ -117,7 +117,7 @@ __pycache__
 
 ## Example 3
 
-This example installs `pkg1` and `pkg3` just like [Example 2][3],
+This example installs `pkg1` and `pkg3` just like [Example 2][2],
 but it installs `pkg3` via `setuptools` (i.e. with `python setup.py install`).
 
 As with Example 2, this works "just fine", though it shows that
@@ -175,7 +175,7 @@ __pycache__
 
 ## Example 4
 
-This example installs `pkg1` and `pkg4`, and like [Example 2][3]
+This example installs `pkg1` and `pkg4`, and like [Example 2][2]
 it uses `pip` for both (and does not cause any issues). It is
 unique because `pkg4` has both `pkg1` and `pkg1.pkg4_ns` as
 namespace packages (i.e. it "collides" with `pkg1`).
@@ -230,7 +230,7 @@ venv4/lib/python3.6/site-packages/pkg1_ns/
 ## Example 5
 
 This example installs `pkg1` and `pkg4` just like [Example 4][4],
-but it uses `setuptools` to install `pkg4` (like [Example 3][5]).
+but it uses `setuptools` to install `pkg4` (like [Example 3][3]).
 The namespace collision between `pkg1` and `pkg4`
 causes an error that has been reported many times over:
 
@@ -346,8 +346,120 @@ venv5/lib/python3.6/site-packages/pkg4-0.0.1-py3.6.egg/pkg1_ns/
     └── __init__.cpython-36.pyc
 ```
 
-[1]: https://github.com/python/cpython/blob/v3.6.2/Lib/importlib/_bootstrap.py#L557
-[2]: #example-1
-[3]: #example-2
+## Example 6
+
+To see if the "latest" version of `pip` fixes the problem in
+[Example 5][5], we can install directly from source:
+
+```
+$ export PIP_COMMIT=90f64b41bbb20ebb7143d88052c944b30dbe61ac
+$ venv6/bin/pip install \
+>   --ignore-installed \
+>   git+git://github.com/pypa/pip.git@${PIP_COMMIT}#egg=pip
+$ unset PIP_COMMIT
+```
+
+Luckily, this keeps `pip` from being broken, but the packages
+are not successfully imported:
+
+```
+$ ./example06.sh
++ VENV=venv6
++ PYTHON=python3.6
++ FIRST_PKG=pkg1
++ SECOND_PKG=pkg4
++ virtualenv --python=python3.6 venv6
+...
++ PIP_COMMIT=90f64b41bbb20ebb7143d88052c944b30dbe61ac
++ venv6/bin/pip install --ignore-installed git+git://github.com/pypa/pip.git@${PIP_COMMIT}#egg=pip
+...
+  Could not find a tag or branch '90f64b41bbb20ebb7143d88052c944b30dbe61ac', assuming commit.
+Installing collected packages: pip
+  Running setup.py install for pip: started
+    Running setup.py install for pip: finished with status 'done'
+Successfully installed pip-10.0.0.dev0
++ venv6/bin/pip show pip
+Name: pip
+Version: 10.0.0.dev0
+...
++ venv6/bin/pip install pkg1-dir/
+...
+Successfully installed pkg1-0.0.1
++ venv6/bin/pip freeze
+pkg1==0.0.1
++ ls -1 venv6/lib/python3.6/site-packages/
++ grep -e 'pth$'
+pkg1-0.0.1-py3.6-nspkg.pth
++ ls -1 venv6/lib/python3.6/site-packages/pkg1_ns/
+foo.py
+__pycache__
++ cd pkg4-dir/
++ ../venv6/bin/python setup.py install
+...
+Extracting pkg4-0.0.1-py3.6.egg to .../venv6/lib/python3.6/site-packages
+Adding pkg4 0.0.1 to easy-install.pth file
+
+Installed .../venv6/lib/python3.6/site-packages/pkg4-0.0.1-py3.6.egg
+Processing dependencies for pkg4==0.0.1
+Finished processing dependencies for pkg4==0.0.1
++ venv6/bin/pip freeze
+pkg1==0.0.1
+pkg4==0.0.1
++ ls -1 venv6/lib/python3.6/site-packages/
++ grep -e 'pth$'
+easy-install.pth
+pkg1-0.0.1-py3.6-nspkg.pth
++ ls -1 venv6/lib/python3.6/site-packages/pkg1_ns/
+foo.py
+__pycache__
++ tree -a venv6/lib/python3.6/site-packages/pkg1_ns/
+venv6/lib/python3.6/site-packages/pkg1_ns/
+├── foo.py
+└── __pycache__
+    └── foo.cpython-36.pyc
+
+1 directory, 2 files
++ tree -a venv6/lib/python3.6/site-packages/pkg4-0.0.1-py3.6.egg/pkg1_ns/
+venv6/lib/python3.6/site-packages/pkg4-0.0.1-py3.6.egg/pkg1_ns/
+├── __init__.py
+├── pkg4_ns
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-36.pyc
+│   │   └── quux.cpython-36.pyc
+│   └── quux.py
+└── __pycache__
+    └── __init__.cpython-36.pyc
+
+3 directories, 6 files
++ venv6/bin/python example06.py
+pkg1_ns: <module 'pkg1_ns' (namespace)>
+pkg1_ns.foo: <module 'pkg1_ns.foo' from '.../venv6/lib/python3.6/site-packages/pkg1_ns/foo.py'>
+pkg1_ns.foo.BIG_NUM: 1337
+pkg1_ns.pkg4_ns: ImportError("cannot import name 'pkg4_ns'",)
+pkg1_ns.pkg4_ns.quux: N/A
+pkg1_ns.pkg4_ns.quux.CHEESE: N/A
++ rm -fr venv6
++ rm -fr pkg4-dir/build/
++ rm -fr pkg4-dir/dist/
++ rm -fr pkg4-dir/src/pkg4.egg-info/
+```
+
+In particular, focus on:
+
+```
++ venv6/bin/python example06.py
+pkg1_ns: <module 'pkg1_ns' (namespace)>
+pkg1_ns.foo: <module 'pkg1_ns.foo' from '.../venv6/lib/python3.6/site-packages/pkg1_ns/foo.py'>
+pkg1_ns.foo.BIG_NUM: 1337
+pkg1_ns.pkg4_ns: ImportError("cannot import name 'pkg4_ns'",)
+pkg1_ns.pkg4_ns.quux: N/A
+pkg1_ns.pkg4_ns.quux.CHEESE: N/A
+```
+
+[importlib]: https://github.com/python/cpython/blob/v3.6.2/Lib/importlib/_bootstrap.py#L557
+[1]: #example-1
+[2]: #example-2
+[3]: #example-3
 [4]: #example-4
-[5]: #example-3
+[5]: #example-5
