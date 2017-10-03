@@ -24,7 +24,6 @@ ls -1 ${VENV}/lib/${PYTHON}/site-packages/${FIRST_PKG}_ns/
     ../${VENV}/bin/python setup.py install)
 ${VENV}/bin/pip freeze
 ls -1 ${VENV}/lib/${PYTHON}/site-packages/ | grep -e 'pth$'
-ls -1 ${VENV}/lib/${PYTHON}/site-packages/${FIRST_PKG}_ns/
 tree -a ${VENV}/lib/${PYTHON}/site-packages/${FIRST_PKG}_ns/
 tree -a ${VENV}/lib/${PYTHON}/site-packages/${SECOND_PKG}*.egg/${FIRST_PKG}_ns/
 # Try to use the packages

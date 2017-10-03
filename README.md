@@ -293,9 +293,6 @@ AttributeError: '_NamespacePath' object has no attribute 'sort'
 + grep -e 'pth$'
 easy-install.pth
 pkg1-0.0.1-py3.6-nspkg.pth
-+ ls -1 venv5/lib/python3.6/site-packages/pkg1_ns/
-foo.py
-__pycache__
 + tree -a venv5/lib/python3.6/site-packages/pkg1_ns/
 venv5/lib/python3.6/site-packages/pkg1_ns/
 ├── foo.py
@@ -409,9 +406,6 @@ pkg4==0.0.1
 + grep -e 'pth$'
 easy-install.pth
 pkg1-0.0.1-py3.6-nspkg.pth
-+ ls -1 venv6/lib/python3.6/site-packages/pkg1_ns/
-foo.py
-__pycache__
 + tree -a venv6/lib/python3.6/site-packages/pkg1_ns/
 venv6/lib/python3.6/site-packages/pkg1_ns/
 ├── foo.py
