@@ -108,7 +108,6 @@ pkg3==0.0.1
 
 This example installs `pkg1` and `pkg3` just like [Example 2][3],
 but it installs `pkg3` via `setuptools` (i.e. with `python setup.py install`).
-of `pkg2`, which actually does include files.
 
 As with Example 2, this works "just fine", though it shows that
 `setuptools` installs an `egg` rather than just adding the source into
