@@ -1,0 +1,2 @@
+graft src/pkg1
+global-exclude *.pyc __pycache__

@@ -3,20 +3,24 @@
 Reproducible error(s) with `pip==9.0.1` and namespace packages
 
 ```
-$ virtualenv --python=python3.6 venv1
-$ venv1/bin/pip show pip
+$ ./example1.sh
++ virtualenv --python=python3.6 venv1
+...
++ venv1/bin/pip show pip
 Name: pip
 Version: 9.0.1
 ...
-$
-$ venv1/bin/pip install pkg1-dir/
-$ venv1/bin/pip freeze
++ venv1/bin/pip install pkg1-dir/
+...
+Successfully installed pkg1-0.0.1
++ venv1/bin/pip freeze
 pkg1==0.0.1
-$ ls -1 venv1/lib/python3.6/site-packages/*pth
++ ls -1 venv1/lib/python3.6/site-packages/pkg1-0.0.1-py3.6-nspkg.pth
 venv1/lib/python3.6/site-packages/pkg1-0.0.1-py3.6-nspkg.pth
-$
-$ venv1/bin/pip install pkg2-dir/
-$ venv1/bin/pip freeze
++ venv1/bin/pip install pkg2-dir/
+...
+Successfully installed pkg2-0.0.1
++ venv1/bin/pip freeze
 Failed to import the site module
 Traceback (most recent call last):
   File ".../venv1/lib/python3.6/site.py", line 703, in <module>
@@ -32,6 +36,7 @@ Traceback (most recent call last):
   File "<string>", line 1, in <module>
   File "<frozen importlib._bootstrap>", line 557, in module_from_spec
 AttributeError: 'NoneType' object has no attribute 'loader'
++ rm -fr venv1/
 ```
 
 This [failure][1] occurs because of
