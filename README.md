@@ -33,3 +33,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 557, in module_from_spec
 AttributeError: 'NoneType' object has no attribute 'loader'
 ```
+
+This [failure][1] occurs because of
+
+```python
+hasattr(spec.loader, 'create_module'):
+```
+
+[1]: https://github.com/python/cpython/blob/v3.6.2/Lib/importlib/_bootstrap.py#L557
