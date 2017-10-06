@@ -2,6 +2,8 @@
 Namespace Package Fail
 ######################
 
+.. contents:: TOC
+
 Reproducible error(s) with ``pip==9.0.1`` and namespace packages
 
 *********
