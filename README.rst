@@ -125,7 +125,7 @@ instead of ``pkg2``, which actually does include files. When using
 Example 3
 *********
 
-This example installs ``pkg1`` and ``pkg3`` just like `Ex. 2`_,
+This example installs ``pkg1`` and ``pkg3`` just like `Example 2`_,
 but it installs ``pkg3`` via ``setuptools`` (i.e. with
 ``python setup.py install``).
 
@@ -186,7 +186,7 @@ As with Example 2, this works "just fine", though it shows that
 Example 4
 *********
 
-This example installs ``pkg1`` and ``pkg4``, and like `Ex. 2`_
+This example installs ``pkg1`` and ``pkg4``, and like `Example 2`_
 it uses ``pip`` for both (and does not cause any issues). It is
 unique because ``pkg4`` has both ``pkg1`` and ``pkg1.pkg4_ns`` as
 namespace packages (i.e. it "collides" with ``pkg1``).
@@ -242,8 +242,8 @@ namespace packages (i.e. it "collides" with ``pkg1``).
 Example 5
 *********
 
-This example installs ``pkg1`` and ``pkg4`` just like `Ex. 4`_,
-but it uses ``setuptools`` to install ``pkg4`` (like `Ex. 3`_).
+This example installs ``pkg1`` and ``pkg4`` just like `Example 4`_,
+but it uses ``setuptools`` to install ``pkg4`` (like `Example 3`_).
 The namespace collision between ``pkg1`` and ``pkg4``
 causes an error that has been reported many times over:
 
@@ -361,7 +361,7 @@ Example 6
 *********
 
 To see if the "latest" version of ``pip`` fixes the problem in
-`Ex. 5`_, we can install directly from source:
+`Example 5`_, we can install directly from source:
 
 ::
 
@@ -468,7 +468,7 @@ In particular, focus on:
 
 .. _failure: https://github.com/python/cpython/blob/v3.6.2/Lib/importlib/_bootstrap.py#L557
 .. _above: https://github.com/dhermes/namespace-pkg-fail#example-1
-.. _Ex. 2: https://github.com/dhermes/namespace-pkg-fail#example-2
-.. _Ex. 3: https://github.com/dhermes/namespace-pkg-fail#example-3
-.. _Ex. 4: https://github.com/dhermes/namespace-pkg-fail#example-4
-.. _Ex. 5: https://github.com/dhermes/namespace-pkg-fail#example-5
+.. _Example 2: https://github.com/dhermes/namespace-pkg-fail#example-2
+.. _Example 3: https://github.com/dhermes/namespace-pkg-fail#example-3
+.. _Example 4: https://github.com/dhermes/namespace-pkg-fail#example-4
+.. _Example 5: https://github.com/dhermes/namespace-pkg-fail#example-5
